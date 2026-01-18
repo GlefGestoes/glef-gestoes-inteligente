@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glef - Gestões Inteligentes</title>
+	<link rel="icon" href="./img/logoico.ico?v=2" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="#home" class="logo">
+                <img src="./img/logo.png" alt="GLEF Logo" class="logo-img">
+                <span class="logo-text">Glef - Gestões Inteligentes</span>
+            </a>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Menu</a></li>
+                <li><a href="#contabil">Contábil</a></li>
+                <li><a href="#dev">Dev</a></li>
+                <li><a href="#dicas">Dicas</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="overlay"></div>
+            
+            <video class="hero-video" autoplay muted loop playsinline poster="./img/poster-fallback.jpg">
+                <source src="./img/videoPC.mp4" type="video/mp4">
+                Seu navegador não suporta vídeo.
+            </video>
+
+            <div class="hero-content">
+                <h1>Gestões Inteligentes</h1>
+                <p>
+                    Oferecemos soluções contábeis, fiscais, de RH e desenvolvimento web
+                    para impulsionar sua empresa com eficiência e inovação.
+                </p>
+                <a href="#contabil" class="btn">Nossos Serviços</a>
+            </div>
+        </section>
+
+        <section id="contabil" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Nossos Serviços</h2>
+                    <p>Soluções completas para a gestão empresarial, combinando expertise contábil com tecnologia de ponta.</p>
+                </div>
+                
+                <div class="cards">
+                    <div class="card">
+                        <img src="./img/contabilefiscal.png" alt="Serviços Contábeis e Fiscais" class="card-img">
+                        <div class="card-content">
+                            <h3>Contábil e Fiscal</h3>
+                            <p>Gestão completa da contabilidade, impostos, obrigações acessórias e planejamento tributário para otimizar seus resultados.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <img src="./img/rh.png" alt="Gestão de RH" class="card-img">
+                        <div class="card-content">
+                            <h3>Recursos Humanos</h3>
+                            <p>Folha de pagamento, admissões, rescisões, compliance trabalhista e gestão de benefícios para sua equipe.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <img src="./img/dev.png" alt="Desenvolvimento Web" class="card-img">
+                        <div class="card-content">
+                            <h3>Desenvolvimento Web</h3>
+                            <p>Criação de sites, sistemas personalizados, e-commerce e aplicativos para digitalizar e expandir seu negócio.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dev" class="section dark">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Desenvolvimento Web</h2>
+                    <p>Criamos soluções digitais sob medida para sua empresa, combinando design moderno com funcionalidades avançadas.</p>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="contact-info">
+                        <h3>Soluções Digitais Personalizadas</h3>
+                        <p>Desenvolvemos sistemas web, e-commerce, landing pages e aplicativos com foco em performance, usabilidade e resultados para seu negócio.</p>
+                        
+                        <div class="features">
+                            <div class="contact-item">
+                                <i class="fas fa-laptop-code"></i>
+                                <div>
+                                    <h4>Tecnologias Modernas</h4>
+                                    <p>Utilizamos as mais recentes tecnologias como React, Node.js, Python e muito mais.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div>
+                                    <h4>Design Responsivo</h4>
+                                    <p>Sites que se adaptam perfeitamente a todos os dispositivos: desktop, tablet e celular.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <div>
+                                    <h4>SEO Otimizado</h4>
+                                    <p>Desenvolvimento com as melhores práticas para ranqueamento nos motores de busca.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form">
+                        <h3>Solicite um Orçamento</h3>
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="name">Nome</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="service">Tipo de Serviço</label>
+                                <select id="service" name="service" required>
+                                    <option value="">Selecione uma opção</option>
+                                    <option value="contabilidade">Contabilidade</option>
+                                    <option value="fiscal">Consultoria Fiscal</option>
+                                    <option value="rh">Recursos Humanos</option>
+                                    <option value="site">Desenvolvimento de Site</option>
+                                    <option value="sistema">Sistema Personalizado</option>
+                                    <option value="ecommerce">E-commerce</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Mensagem</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn">Enviar Solicitação</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dicas" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Dicas para sua Empresa</h2>
+                    <p>Conhecimento e estratégias para otimizar a gestão e o crescimento do seu negócio.</p>
+                </div>
+                
+                <div class="tips">
+                    <div class="tip">
+                        <h3><i class="fas fa-user-tie"></i> Atendimento Personalizado</h3>
+                        <p>Oferecemos um acompanhamento próximo e personalizado, entendendo as particularidades do seu negócio para propor as melhores soluções.</p>
+                    </div>
+                    
+                    <div class="tip">
+                        <h3><i class="fas fa-calculator"></i> Planejamento Tributário</h3>
+                        <p>Estratégias para redução legal da carga tributária, escolhendo o melhor regime para sua empresa e aproveitando benefícios fiscais.</p>
+                    </div>
+                    
+                    <div class="tip">
+                        <h3><i class="fas fa-chart-line"></i> Planejamento Financeiro</h3>
+                        <p>Controle de fluxo de caixa, projeções financeiras e análise de indicadores para tomada de decisões estratégicas.</p>
+                    </div>
+                    
+                    <div class="tip">
+                        <h3><i class="fas fa-balance-scale"></i> Reforma Tributária</h3>
+                        <p>Acompanhamento especializado das mudanças na legislação e preparação da sua empresa para a transição de forma segura.</p>
+                    </div>
+                    
+                    <div class="tip">
+                        <h3><i class="fas fa-sitemap"></i> Estratégia Organizacional</h3>
+                        <p>Otimização de processos, estruturação organizacional e implementação de governança corporativa para escalabilidade.</p>
+                    </div>
+                    
+                    <div class="tip">
+                        <h3><i class="fas fa-code"></i> Desenvolvimento Web</h3>
+                        <p>Sites e sistemas que não apenas apresentam sua empresa, mas funcionam como ferramentas estratégicas para gerar negócios.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>GLEF - Gestões Inteligentes</h3>
+                    <p>Especialistas em soluções contábeis, fiscais, de RH e desenvolvimento web para empresas que buscam eficiência e crescimento.</p>
+                    <div class="social-icons">
+                        <a href=""><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/sro_gabriel_dantas?igsh=eWwyMW85c255dmhx"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/gabriel-dantas-3010a488?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://wa.me/5592984801522?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre..."><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Menu</a></li>
+                        <li><a href="#contabil">Contábil</a></li>
+                        <li><a href="#dev">Dev</a></li>
+                        <li><a href="#dicas">Dicas</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Nossos Serviços</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Contabilidade</a></li>
+                        <li><a href="#">Consultoria Fiscal</a></li>
+                        <li><a href="#">Gestão de RH</a></li>
+                        <li><a href="#">Desenvolvimento Web</a></li>
+                        <li><a href="#">Sistemas Personalizados</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i>Rua Parque Minas Gerais, 42 - Iranduba, AM</li>
+                        <li><i class="fas fa-phone"></i> (92) 98480-1522</li>
+                        <li><i class="fas fa-envelope"></i> glef@gestoes.com.br</li>
+                        <li><i class="fas fa-clock"></i> Seg-Sex: 8h às 18h</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2023 GLEF - Gestões Inteligentes. Todos os direitos reservados. | CNPJ: 49.967.749/0001-00</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src=".js/script.js"></script>
+</body>
+</html>
