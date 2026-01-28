@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glef - Gestões Inteligentes</title>
-	<link rel="icon" href="./img/logoico.ico?v=2" type="image/x-icon">
+    <title>Glef - Gestões Inteligente</title>
+    <link rel="icon" href="./img/logoico.ico?v=2" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -13,7 +13,7 @@
         <div class="container nav-content">
             <a href="#home" class="logo">
                 <img src="./img/logo.png" alt="GLEF Logo" class="logo-img">
-                <span class="logo-text">Glef - Gestões Inteligentes</span>
+                <span class="logo-text">Glef - Gestões Inteligente</span>
             </a>
             <div class="hamburger" id="hamburger">
                 <i class="fas fa-bars"></i>
@@ -37,24 +37,26 @@
             </video>
 
             <div class="hero-content">
-                <h1>Gestões Inteligentes</h1>
-                <p>
+                <h1 class="reveal">Gestões Inteligente</h1>
+                <p class="reveal delay-1">
                     Oferecemos soluções contábeis, fiscais, de RH e desenvolvimento web
                     para impulsionar sua empresa com eficiência e inovação.
                 </p>
-                <a href="#contabil" class="btn">Nossos Serviços</a>
+                <div class="reveal delay-2">
+                    <a href="#contabil" class="btn">Nossos Serviços</a>
+                </div>
             </div>
         </section>
 
         <section id="contabil" class="section">
             <div class="container">
                 <div class="section-title">
-                    <h2>Nossos Serviços</h2>
-                    <p>Soluções completas para a gestão empresarial, combinando expertise contábil com tecnologia de ponta.</p>
+                    <h2 class="reveal">Nossos Serviços</h2>
+                    <p class="reveal delay-1">Soluções completas para a gestão empresarial, combinando expertise contábil com tecnologia de ponta.</p>
                 </div>
                 
                 <div class="cards">
-                    <div class="card">
+                    <div class="card stagger-card reveal">
                         <img src="./img/contabilefiscal.png" alt="Serviços Contábeis e Fiscais" class="card-img">
                         <div class="card-content">
                             <h3>Contábil e Fiscal</h3>
@@ -62,7 +64,7 @@
                         </div>
                     </div>
                     
-                    <div class="card">
+                    <div class="card stagger-card reveal delay-1">
                         <img src="./img/rh.png" alt="Gestão de RH" class="card-img">
                         <div class="card-content">
                             <h3>Recursos Humanos</h3>
@@ -70,7 +72,7 @@
                         </div>
                     </div>
                     
-                    <div class="card">
+                    <div class="card stagger-card reveal delay-2">
                         <img src="./img/dev.png" alt="Desenvolvimento Web" class="card-img">
                         <div class="card-content">
                             <h3>Desenvolvimento Web</h3>
@@ -84,17 +86,17 @@
         <section id="dev" class="section dark">
             <div class="container">
                 <div class="section-title">
-                    <h2>Desenvolvimento Web</h2>
-                    <p>Criamos soluções digitais sob medida para sua empresa, combinando design moderno com funcionalidades avançadas.</p>
+                    <h2 class="reveal">Desenvolvimento Web</h2>
+                    <p class="reveal delay-1">Criamos soluções digitais sob medida para sua empresa, combinando design moderno com funcionalidades avançadas.</p>
                 </div>
                 
                 <div class="grid-2">
-                    <div class="contact-info">
+                    <div class="contact-info reveal reveal-left">
                         <h3>Soluções Digitais Personalizadas</h3>
                         <p>Desenvolvemos sistemas web, e-commerce, landing pages e aplicativos com foco em performance, usabilidade e resultados para seu negócio.</p>
                         
                         <div class="features">
-                            <div class="contact-item">
+                            <div class="contact-item reveal delay-1">
                                 <i class="fas fa-laptop-code"></i>
                                 <div>
                                     <h4>Tecnologias Modernas</h4>
@@ -102,7 +104,7 @@
                                 </div>
                             </div>
                             
-                            <div class="contact-item">
+                            <div class="contact-item reveal delay-2">
                                 <i class="fas fa-mobile-alt"></i>
                                 <div>
                                     <h4>Design Responsivo</h4>
@@ -110,7 +112,7 @@
                                 </div>
                             </div>
                             
-                            <div class="contact-item">
+                            <div class="contact-item reveal delay-3">
                                 <i class="fas fa-chart-bar"></i>
                                 <div>
                                     <h4>SEO Otimizado</h4>
@@ -120,20 +122,20 @@
                         </div>
                     </div>
                     
-                    <div class="form">
+                    <div class="form reveal reveal-right delay-1">
                         <h3>Solicite um Orçamento</h3>
                         <form id="contactForm">
-                            <div class="form-group">
+                            <div class="form-group reveal delay-1">
                                 <label for="name">Nome</label>
                                 <input type="text" id="name" name="name" required>
                             </div>
                             
-                            <div class="form-group">
+                            <div class="form-group reveal delay-2">
                                 <label for="email">Email</label>
                                 <input type="email" id="email" name="email" required>
                             </div>
                             
-                            <div class="form-group">
+                            <div class="form-group reveal delay-3">
                                 <label for="service">Tipo de Serviço</label>
                                 <select id="service" name="service" required>
                                     <option value="">Selecione uma opção</option>
@@ -146,12 +148,12 @@
                                 </select>
                             </div>
                             
-                            <div class="form-group">
+                            <div class="form-group reveal delay-4">
                                 <label for="message">Mensagem</label>
                                 <textarea id="message" name="message" rows="5" required></textarea>
                             </div>
                             
-                            <button type="submit" class="btn">Enviar Solicitação</button>
+                            <button type="submit" class="btn reveal delay-5">Enviar Solicitação</button>
                         </form>
                     </div>
                 </div>
@@ -161,37 +163,37 @@
         <section id="dicas" class="section">
             <div class="container">
                 <div class="section-title">
-                    <h2>Dicas para sua Empresa</h2>
-                    <p>Conhecimento e estratégias para otimizar a gestão e o crescimento do seu negócio.</p>
+                    <h2 class="reveal">Dicas para sua Empresa</h2>
+                    <p class="reveal delay-1">Conhecimento e estratégias para otimizar a gestão e o crescimento do seu negócio.</p>
                 </div>
                 
                 <div class="tips">
-                    <div class="tip">
+                    <div class="tip stagger-card reveal">
                         <h3><i class="fas fa-user-tie"></i> Atendimento Personalizado</h3>
                         <p>Oferecemos um acompanhamento próximo e personalizado, entendendo as particularidades do seu negócio para propor as melhores soluções.</p>
                     </div>
                     
-                    <div class="tip">
+                    <div class="tip stagger-card reveal delay-1">
                         <h3><i class="fas fa-calculator"></i> Planejamento Tributário</h3>
                         <p>Estratégias para redução legal da carga tributária, escolhendo o melhor regime para sua empresa e aproveitando benefícios fiscais.</p>
                     </div>
                     
-                    <div class="tip">
+                    <div class="tip stagger-card reveal delay-2">
                         <h3><i class="fas fa-chart-line"></i> Planejamento Financeiro</h3>
                         <p>Controle de fluxo de caixa, projeções financeiras e análise de indicadores para tomada de decisões estratégicas.</p>
                     </div>
                     
-                    <div class="tip">
+                    <div class="tip stagger-card reveal delay-1">
                         <h3><i class="fas fa-balance-scale"></i> Reforma Tributária</h3>
                         <p>Acompanhamento especializado das mudanças na legislação e preparação da sua empresa para a transição de forma segura.</p>
                     </div>
                     
-                    <div class="tip">
+                    <div class="tip stagger-card reveal delay-2">
                         <h3><i class="fas fa-sitemap"></i> Estratégia Organizacional</h3>
                         <p>Otimização de processos, estruturação organizacional e implementação de governança corporativa para escalabilidade.</p>
                     </div>
                     
-                    <div class="tip">
+                    <div class="tip stagger-card reveal delay-3">
                         <h3><i class="fas fa-code"></i> Desenvolvimento Web</h3>
                         <p>Sites e sistemas que não apenas apresentam sua empresa, mas funcionam como ferramentas estratégicas para gerar negócios.</p>
                     </div>
@@ -200,10 +202,10 @@
         </section>
     </main>
 
-    <footer>
+    <footer class="reveal">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-column">
+                <div class="footer-column reveal delay-1">
                     <h3>GLEF - Gestões Inteligentes</h3>
                     <p>Especialistas em soluções contábeis, fiscais, de RH e desenvolvimento web para empresas que buscam eficiência e crescimento.</p>
                     <div class="social-icons">
@@ -214,7 +216,7 @@
                     </div>
                 </div>
                 
-                <div class="footer-column">
+                <div class="footer-column reveal delay-2">
                     <h3>Links Rápidos</h3>
                     <ul class="footer-links">
                         <li><a href="#home">Menu</a></li>
@@ -224,7 +226,7 @@
                     </ul>
                 </div>
                 
-                <div class="footer-column">
+                <div class="footer-column reveal delay-3">
                     <h3>Nossos Serviços</h3>
                     <ul class="footer-links">
                         <li><a href="#">Contabilidade</a></li>
@@ -235,7 +237,7 @@
                     </ul>
                 </div>
                 
-                <div class="footer-column">
+                <div class="footer-column reveal delay-4">
                     <h3>Contato</h3>
                     <ul class="footer-links">
                         <li><i class="fas fa-map-marker-alt"></i>Rua Parque Minas Gerais, 42 - Iranduba, AM</li>
@@ -246,8 +248,8 @@
                 </div>
             </div>
             
-            <div class="copyright">
-                <p>© 2023 GLEF - Gestões Inteligentes. Todos os direitos reservados. | CNPJ: 49.967.749/0001-00</p>
+            <div class="copyright reveal delay-5">
+                <p>© 2026 Glef - Gestões Inteligente. Todos os direitos reservados. | CNPJ: 49.967.749/0001-00</p>
             </div>
         </div>
     </footer>
