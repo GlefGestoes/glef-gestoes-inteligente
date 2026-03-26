@@ -13,7 +13,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-64R4XPQ2B7');
     </script>
 </head>
@@ -22,7 +21,7 @@
         <div class="container nav-content">
             <a href="#home" class="logo">
                 <img src="./img/logo.png" alt="GLEF Logo" class="logo-img">
-                <span class="logo-text">Glef - Gestões Inteligente</span>
+                <span class="logo-text">Glef - Gestões Inteligentes</span>
             </a>
             <div class="hamburger" id="hamburger">
                 <i class="fas fa-bars"></i>
@@ -46,7 +45,7 @@
             </video>
 
             <div class="hero-content">
-                <h1 class="reveal">Gestões Inteligente</h1>
+                <h1 class="reveal">Gestões Inteligentes</h1>
                 <p class="reveal delay-1">
                     Oferecemos soluções contábeis, fiscais, de RH e desenvolvimento web
                     para impulsionar sua empresa com eficiência e inovação.
@@ -57,6 +56,9 @@
             </div>
         </section>
 
+        <!-- ====================================================
+             SEÇÃO CONTÁBIL — Cards substituídos pelas calculadoras
+             ==================================================== -->
         <section id="contabil" class="section">
             <div class="container">
                 <div class="section-title">
@@ -64,6 +66,7 @@
                     <p class="reveal delay-1">Soluções completas para a gestão empresarial, combinando expertise contábil com tecnologia de ponta.</p>
                 </div>
                 
+                <!-- Cards de Serviços -->
                 <div class="cards">
                     <div class="card stagger-card reveal-left">
                         <img src="./img/contabilefiscal.png" alt="Serviços Contábeis e Fiscais" class="card-img">
@@ -89,6 +92,417 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Simuladores Tributários -->
+                <div class="calc-tabs-wrapper reveal delay-2">
+                    <div class="calc-tabs-header">
+                        <i class="fas fa-calculator"></i>
+                        <span>Simuladores Tributários</span>
+                    </div>
+                    <div class="calc-tabs">
+                        <button class="calc-tab active" data-tab="simples-nacional">Simples Nacional</button>
+                        <button class="calc-tab" data-tab="lucro-presumido">Lucro Presumido</button>
+                        <button class="calc-tab" data-tab="lucro-real">Lucro Real</button>
+                        <button class="calc-tab" data-tab="comparativo">Comparativo</button>
+                        <button class="calc-tab" data-tab="pessoa-fisica">Pessoa Física (IRRF)</button>
+                        <button class="calc-tab" data-tab="mei">MEI (IRPF)</button>
+                    </div>
+                </div>
+
+                <!-- ============ CALCULADORA 1: SIMPLES NACIONAL ============ -->
+                <div class="calc-panel active reveal delay-3" id="tab-simples-nacional">
+                    <div id="sn-calc-container">
+                        <div class="sn-calc-header">
+                            <h2>Simulador Simples Nacional Avançado</h2>
+                        </div>
+
+                        <div class="sn-calc-section">
+                            <label class="sn-calc-label">Tipo de Atividade:</label>
+                            <select id="sn_tipo" class="sn-calc-input" onchange="snToggleInputs()">
+                                <option value="servico">Serviço</option>
+                                <option value="comercio">Comércio</option>
+                                <option value="ambos">Ambos (Serviço e Comércio)</option>
+                            </select>
+                        </div>
+
+                        <div id="fator_r_container" class="fator-r-toggle">
+                            <label style="cursor:pointer; font-weight:bold;">
+                                <input type="checkbox" id="chk_fator_r" onchange="snToggleFatorR()"> Atividade sujeita ao Fator-R (Anexo III/V)?
+                            </label>
+                            <div id="inputs_fator_r" style="display:none; margin-top:15px;" class="sn-calc-row">
+                                <div class="sn-calc-col">
+                                    <label class="sn-calc-label">Folha de Salários (12 meses):</label>
+                                    <input type="text" id="sn_folha12" class="sn-calc-input" placeholder="R$ 0,00" oninput="snMascaraMoeda(this)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="sec_servico" class="sn-calc-section">
+                            <h4 style="color: var(--mint); margin-bottom:12px;">Dados de Serviço</h4>
+                            <div class="sn-calc-row">
+                                <div class="sn-calc-col">
+                                    <label class="sn-calc-label">RBT12 Serviço:</label>
+                                    <input type="text" id="sn_rbt12_serv" class="sn-calc-input" placeholder="R$ 0,00" oninput="snMascaraMoeda(this)">
+                                </div>
+                                <div class="sn-calc-col">
+                                    <label class="sn-calc-label">Faturamento Mês (Serviço):</label>
+                                    <input type="text" id="sn_fat_mes_serv" class="sn-calc-input" placeholder="R$ 0,00" oninput="snMascaraMoeda(this)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="sec_comercio" class="sn-calc-section" style="display:none;">
+                            <h4 style="color: var(--pink); margin-bottom:12px;">Dados de Comércio</h4>
+                            <div class="sn-calc-row">
+                                <div class="sn-calc-col">
+                                    <label class="sn-calc-label">RBT12 Comércio:</label>
+                                    <input type="text" id="sn_rbt12_com" class="sn-calc-input" placeholder="R$ 0,00" oninput="snMascaraMoeda(this)">
+                                </div>
+                                <div class="sn-calc-col">
+                                    <label class="sn-calc-label">Faturamento Mês (Comércio):</label>
+                                    <input type="text" id="sn_fat_mes_com" class="sn-calc-input" placeholder="R$ 0,00" oninput="snMascaraMoeda(this)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sn-calc-btn-group">
+                            <button class="sn-calc-btn btn-calculate" onclick="snCalcularTudo()">Calcular Imposto</button>
+                            <button class="sn-calc-btn btn-reset" onclick="snResetar()">Recalcular</button>
+                            <button class="sn-calc-btn btn-print" onclick="window.print()">Imprimir PDF</button>
+                        </div>
+
+                        <div id="sn_resultado_final"></div>
+
+                        <p class="sn-calc-footer">
+                            Ficou com dúvidas ou precisa de mais explicações, entre em contato conosco.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ============ CALCULADORA 2: LUCRO PRESUMIDO ============ -->
+                <div class="calc-panel reveal delay-3" id="tab-lucro-presumido">
+                    <div id="calculadora-lucro-presumido">
+                        <h3>Cálculo Trimestral — Lucro Presumido</h3>
+
+                        <div class="calc-grupo">
+                            <label for="calc-tipo">Tipo de Atividade:</label>
+                            <select id="calc-tipo" onchange="lpAlternarCampos()">
+                                <option value="comercio">Apenas Comércio</option>
+                                <option value="servico">Apenas Serviço</option>
+                                <option value="ambos">Comércio e Serviço</option>
+                            </select>
+                        </div>
+
+                        <div class="calc-grupo" id="grupo-comercio">
+                            <label>Receitas de Vendas (Comércio):</label>
+                            <div class="flex-row">
+                                <div><label>Mês 1</label><input type="text" id="com-m1" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                                <div><label>Mês 2</label><input type="text" id="com-m2" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                                <div><label>Mês 3</label><input type="text" id="com-m3" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="calc-grupo" id="grupo-servico" style="display:none;">
+                            <label>Receitas de Serviços:</label>
+                            <div class="flex-row">
+                                <div><label>Mês 1</label><input type="text" id="srv-m1" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                                <div><label>Mês 2</label><input type="text" id="srv-m2" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                                <div><label>Mês 3</label><input type="text" id="srv-m3" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="calc-grupo">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="check-devolucoes" onchange="lpAlternarCampos()"> Devoluções / Cancelamentos
+                            </label>
+                            <div id="grupo-devolucoes" style="display:none; margin-top:15px;">
+                                <div id="dev-comercio-div">
+                                    <label>Devoluções (Comércio):</label>
+                                    <input type="text" id="dev-comercio" value="0,00" oninput="lpMascaraMoeda(this)">
+                                </div>
+                                <div id="dev-servico-div" style="display:none; margin-top:10px;">
+                                    <label>Devoluções (Serviço):</label>
+                                    <input type="text" id="dev-servico" value="0,00" oninput="lpMascaraMoeda(this)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="calc-grupo">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="check-retencoes" onchange="lpAlternarCampos()"> Retenções na Fonte
+                            </label>
+                            <div id="grupo-retencoes" class="flex-row" style="display:none; margin-top:15px;">
+                                <div><label>Ret. IRPJ:</label><input type="text" id="ret-irpj" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                                <div><label>Ret. CSLL:</label><input type="text" id="ret-csll" value="0,00" oninput="lpMascaraMoeda(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="btn-container">
+                            <button class="btn-calcular" onclick="lpCalcularImpostos()">Calcular</button>
+                            <button class="btn-limpar" onclick="lpLimparCampos()">Apagar</button>
+                            <button class="btn-imprimir" onclick="window.print()">Imprimir PDF</button>
+                        </div>
+
+                        <div id="calc-resultados">
+                            <h4 style="text-align:center; margin-top:0;">DEMONSTRATIVO DE CÁLCULO TRIMESTRAL</h4>
+                            <div id="res-bloco-comercio" class="secao-resultado">
+                                <h5>Atividade: Comércio</h5>
+                                <div class="result-item"><span>Faturamento Bruto:</span> <span id="r-com-bruto">R$ 0,00</span></div>
+                                <div class="result-item"><span>(-) Devoluções:</span> <span id="r-com-dev">R$ 0,00</span></div>
+                                <div class="result-item totalizador"><span>(=) Base Líquida Comércio:</span> <span id="r-com-liq">R$ 0,00</span></div>
+                                <div class="result-item"><span>Base IRPJ (8%):</span> <span id="r-com-base-irpj">R$ 0,00</span></div>
+                                <div class="result-item"><span>Base CSLL (12%):</span> <span id="r-com-base-csll">R$ 0,00</span></div>
+                            </div>
+                            <div id="res-bloco-servico" class="secao-resultado">
+                                <h5>Atividade: Serviço</h5>
+                                <div class="result-item"><span>Faturamento Bruto:</span> <span id="r-srv-bruto">R$ 0,00</span></div>
+                                <div class="result-item"><span>(-) Devoluções:</span> <span id="r-srv-dev">R$ 0,00</span></div>
+                                <div class="result-item totalizador"><span>(=) Base Líquida Serviço:</span> <span id="r-srv-liq">R$ 0,00</span></div>
+                                <div class="result-item"><span>Base IRPJ (32%):</span> <span id="r-srv-base-irpj">R$ 0,00</span></div>
+                                <div class="result-item"><span>Base CSLL (32%):</span> <span id="r-srv-base-csll">R$ 0,00</span></div>
+                            </div>
+                            <div class="secao-resultado secao-consolidacao">
+                                <h5>Consolidação de Impostos</h5>
+                                <div class="result-item"><span>Base Total Presumida IRPJ:</span> <span id="res-base-total-irpj">R$ 0,00</span></div>
+                                <div class="result-item"><span>IRPJ Normal (15%):</span> <span id="res-irpj-15">R$ 0,00</span></div>
+                                <div class="result-item"><span>Adicional IRPJ (10% sobre excedente 60k):</span> <span id="res-irpj-add">R$ 0,00</span></div>
+                                <div class="result-item"><span>(-) Retenções IRPJ:</span> <span id="res-irpj-ret">R$ 0,00</span></div>
+                                <div class="result-item destaque"><span>IRPJ A PAGAR:</span> <span id="res-total-irpj">R$ 0,00</span></div>
+                                <hr>
+                                <div class="result-item"><span>Base Total Presumida CSLL:</span> <span id="res-base-total-csll">R$ 0,00</span></div>
+                                <div class="result-item"><span>CSLL (9%):</span> <span id="res-csll-9">R$ 0,00</span></div>
+                                <div class="result-item"><span>(-) Retenções CSLL:</span> <span id="res-csll-ret">R$ 0,00</span></div>
+                                <div class="result-item destaque"><span>CSLL A PAGAR:</span> <span id="res-total-csll">R$ 0,00</span></div>
+                            </div>
+                        </div>
+
+                        <div class="footer-msg">
+                            Ficou com dúvidas ou deseja mais informações, entre em contato conosco.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ CALCULADORA 3: LUCRO REAL ============ -->
+                <div class="calc-panel reveal delay-3" id="tab-lucro-real">
+                    <div id="calc-irpj-container">
+                        <div id="calc-form-content">
+                            <div class="calc-section">
+                                <label class="calc-label">Lucro antes do IRPJ e CSLL (LALUR/LACS):</label>
+                                <input type="text" id="calc_lucro" class="calc-input" placeholder="R$ 0,00" oninput="lrMascaraMoeda(this)">
+                                <p class="calc-info">O valor informado já deve considerar as adições e exclusões fiscais (Partes A e B do e-Lalur).</p>
+                            </div>
+                            <div class="calc-section">
+                                <label class="calc-label">Período de Apuração:</label>
+                                <select id="calc_periodo" class="calc-input">
+                                    <option value="20000">Mensal (Isenção Adicional: R$ 20.000,00)</option>
+                                    <option value="60000">Trimestral (Isenção Adicional: R$ 60.000,00)</option>
+                                    <option value="240000">Anual (Isenção Adicional: R$ 240.000,00)</option>
+                                </select>
+                            </div>
+                            <div class="calc-section">
+                                <label class="calc-label">Prejuízos Fiscais de Períodos Anteriores:</label>
+                                <input type="text" id="calc_prejuizo" class="calc-input" placeholder="R$ 0,00" oninput="lrMascaraMoeda(this)">
+                                <p class="calc-info">Compensação limitada a 30% do lucro líquido ajustado.</p>
+                            </div>
+                            <div class="calc-section">
+                                <label class="calc-label">Retenção de IRPJ (se houver):</label>
+                                <input type="text" id="calc_ret_irpj" class="calc-input" placeholder="R$ 0,00" oninput="lrMascaraMoeda(this)">
+                            </div>
+                            <div class="calc-section">
+                                <label class="calc-label">Retenção de CSLL (se houver):</label>
+                                <input type="text" id="calc_ret_csll" class="calc-input" placeholder="R$ 0,00" oninput="lrMascaraMoeda(this)">
+                            </div>
+                            <div class="calc-buttons">
+                                <button class="btn-calc" onclick="lrCalcularImpostos()">Calcular</button>
+                                <button class="btn-reset-lr" onclick="lrResetarCalculo()">Recalcular</button>
+                                <button class="btn-print-lr" onclick="window.print()">Imprimir Planilha</button>
+                            </div>
+                        </div>
+
+                        <table id="calc-result-table">
+                            <thead>
+                                <tr><th colspan="2">DEMONSTRATIVO DE CÁLCULO — LUCRO REAL</th></tr>
+                            </thead>
+                            <tbody id="calc-result-body"></tbody>
+                        </table>
+
+                        <p class="calc-footer">
+                            Quer mais informações ou precisa de ajuda? <strong>Entre em contato conosco.</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ============ CALCULADORA 4: COMPARATIVO ============ -->
+                <div class="calc-panel reveal delay-3" id="tab-comparativo">
+                    <div id="painel-comparativo-avancado">
+                        <div class="header-comp">
+                            <h2>Comparativo Tributário Estratégico</h2>
+                            <small>Simples Nacional vs Lucro Presumido vs Lucro Real</small>
+                        </div>
+
+                        <div class="input-grid">
+                            <div>
+                                <label class="comp-label">Faturamento Mensal:</label>
+                                <input type="text" id="c_receita" oninput="compMascaraMoeda(this)" placeholder="R$ 0,00" class="comp-input">
+                            </div>
+                            <div>
+                                <label class="comp-label">RBT12 (Acumulado):</label>
+                                <input type="text" id="c_rbt12" oninput="compMascaraMoeda(this)" placeholder="R$ 0,00" class="comp-input">
+                            </div>
+                            <div>
+                                <label class="comp-label">Folha Salarial + Pró-Labore:</label>
+                                <input type="text" id="c_folha" oninput="compMascaraMoeda(this)" placeholder="R$ 0,00" class="comp-input">
+                            </div>
+                            <div>
+                                <label class="comp-label">Despesas Operacionais:</label>
+                                <input type="text" id="c_despesas" oninput="compMascaraMoeda(this)" placeholder="R$ 0,00" class="comp-input">
+                            </div>
+                        </div>
+
+                        <button class="btn-executar" onclick="compCalcularComparativo()">SIMULAR ECONOMIA TRIBUTÁRIA</button>
+
+                        <div class="res-grid" id="grid_resultados" style="display:none;">
+                            <div class="col-regime" id="card_s">
+                                <div id="badge_s"></div>
+                                <h4>Simples Nacional</h4>
+                                <div id="detalhe_s"></div>
+                                <div class="total-regime" id="total_s"></div>
+                            </div>
+                            <div class="col-regime" id="card_p">
+                                <div id="badge_p"></div>
+                                <h4>Lucro Presumido</h4>
+                                <div id="detalhe_p"></div>
+                                <div class="total-regime" id="total_p"></div>
+                            </div>
+                            <div class="col-regime" id="card_r">
+                                <div id="badge_r"></div>
+                                <h4>Lucro Real</h4>
+                                <div id="detalhe_r"></div>
+                                <div class="total-regime" id="total_r"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ CALCULADORA 5: PESSOA FÍSICA — IRRF 2026 ============ -->
+                <div class="calc-panel reveal delay-3" id="tab-pessoa-fisica">
+                    <div id="glef-calc-container">
+                        <div class="glef-calc-card">
+                            <h2 class="glef-calc-title">Calculadora de IRRF 2026</h2>
+                            <div class="glef-calc-form">
+                                <div class="glef-calc-group">
+                                    <label>Salário Bruto (R$)</label>
+                                    <input type="text" id="glef-calc-bruto" placeholder="0,00" oninput="glefMascaraMoeda(this)">
+                                    <small>Informe o total de rendimentos tributáveis (Salário, HE, etc).</small>
+                                </div>
+                                <div class="glef-calc-group">
+                                    <label>Dependentes</label>
+                                    <input type="number" id="glef-calc-dep" value="0" min="0">
+                                    <small>Filhos, cônjuge ou enteados conforme regra da RFB.</small>
+                                </div>
+                                <div class="glef-calc-group">
+                                    <label>Despesas Dedutíveis (R$)</label>
+                                    <input type="text" id="glef-calc-dedut" placeholder="0,00" oninput="glefMascaraMoeda(this)">
+                                    <small>Ex: Despesas Médicas e Educacionais (ajuste anual).</small>
+                                </div>
+                                <div class="glef-calc-actions">
+                                    <button onclick="glefCalcular()" class="glef-btn-calc">Calcular</button>
+                                    <button onclick="glefLimpar()" class="glef-btn-reset">Recalcular</button>
+                                    <button onclick="window.print()" class="glef-btn-print">Imprimir</button>
+                                </div>
+                            </div>
+                            <div id="glef-calc-resultado" style="display:none;">
+                                <hr class="glef-calc-divider">
+                                <div class="glef-calc-section">
+                                    <h3>1. Previdência Social (INSS)</h3>
+                                    <div id="glef-calc-memo-inss" class="glef-calc-memo"></div>
+                                </div>
+                                <div class="glef-calc-section">
+                                    <h3>2. Imposto de Renda (IRRF)</h3>
+                                    <p><strong>Base de Cálculo:</strong> <span id="glef-calc-base-val"></span></p>
+                                    <div id="glef-calc-memo-ir" class="glef-calc-memo"></div>
+                                </div>
+                                <div class="glef-calc-total-box">
+                                    <span>Imposto a Pagar:</span>
+                                    <strong id="glef-calc-final">R$ 0,00</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ CALCULADORA 6: MEI — IRPF ============ -->
+                <div class="calc-panel reveal delay-3" id="tab-mei">
+                    <div id="amz-calc-container">
+                        <div class="amz-calc-card">
+                            <h2 class="amz-calc-title">Calculadora de IRPF para MEI</h2>
+                            <div class="amz-calc-section">
+                                <label class="amz-label-main">1. Selecione as atividades do seu MEI:</label>
+                                <div class="amz-checkbox-group">
+                                    <label><input type="checkbox" class="amz-check" value="comercio" onchange="amzToggleInput()"> Comércio/Indústria</label>
+                                    <label><input type="checkbox" class="amz-check" value="servico" onchange="amzToggleInput()"> Serviços</label>
+                                    <label><input type="checkbox" class="amz-check" value="transporte" onchange="amzToggleInput()"> Transporte</label>
+                                </div>
+                            </div>
+                            <div class="amz-calc-grid" id="amz-inputs-faturamento">
+                                <div id="field-comercio" class="amz-calc-group amz-hidden">
+                                    <label>Receita Comércio (8%)</label>
+                                    <input type="text" id="val-comercio" placeholder="R$ 0,00" class="amz-mask-money">
+                                </div>
+                                <div id="field-servico" class="amz-calc-group amz-hidden">
+                                    <label>Receita Serviços (32%)</label>
+                                    <input type="text" id="val-servico" placeholder="R$ 0,00" class="amz-mask-money">
+                                </div>
+                                <div id="field-transporte" class="amz-calc-group amz-hidden">
+                                    <label>Receita Transporte (16%)</label>
+                                    <input type="text" id="val-transporte" placeholder="R$ 0,00" class="amz-mask-money">
+                                </div>
+                            </div>
+                            <div class="amz-calc-grid">
+                                <div class="amz-calc-group">
+                                    <label for="amz-periodo">Período de Referência</label>
+                                    <select id="amz-periodo">
+                                        <option value="12">Anual (12 meses)</option>
+                                        <option value="1">Mensal (Projeção)</option>
+                                    </select>
+                                </div>
+                                <div class="amz-calc-group">
+                                    <label for="amz-despesas">Despesas Operacionais Comprovadas</label>
+                                    <input type="text" id="amz-despesas" placeholder="R$ 0,00" class="amz-mask-money">
+                                    <small class="amz-alert">⚠️ Aluguel, luz, mercadorias com NF, etc.</small>
+                                </div>
+                            </div>
+                            <div class="amz-actions">
+                                <button onclick="amzCalcular()" class="amz-btn-prime">Gerar Memória de Cálculo</button>
+                                <button onclick="amzLimpar()" class="amz-btn-sub">Limpar</button>
+                                <button onclick="window.print()" class="amz-btn-sub">Imprimir</button>
+                            </div>
+                            <div id="amz-resultado" class="amz-result-box" style="display:none;">
+                                <h3>Detalhamento da Memória de Cálculo</h3>
+                                <div id="amz-memoria-print">
+                                    <table class="amz-table">
+                                        <thead>
+                                            <tr><th>Descrição</th><th>Valor</th></tr>
+                                        </thead>
+                                        <tbody id="amz-table-body"></tbody>
+                                        <tfoot>
+                                            <tr class="amz-highlight-green">
+                                                <td>(+) PARCELA ISENTA (Não tributável)</td>
+                                                <td id="res-isento">R$ 0,00</td>
+                                            </tr>
+                                            <tr class="amz-highlight-blue">
+                                                <td>(=) RENDIMENTO TRIBUTÁVEL (Declarar no IRPF)</td>
+                                                <td id="res-tributavel">R$ 0,00</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                    <div id="amz-status-alerta"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -215,13 +629,13 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-column reveal delay-1">
-                    <h3>Glef - Gestões Inteligente</h3>
+                    <h3>GLEF - Gestões Inteligentes</h3>
                     <p>Especialistas em soluções contábeis, fiscais, de RH e desenvolvimento web para empresas que buscam eficiência e crescimento.</p>
                     <div class="social-icons">
-                        <a href=""><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.instagram.com/sro_gabriel_dantas?igsh=eWwyMW85c255dmhx"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.linkedin.com/in/gabriel-dantas-3010a488?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://wa.me/5592984801522?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre..."><i class="fab fa-whatsapp"></i></a>
+                        <a href="" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/sro_gabriel_dantas?igsh=eWwyMW85c255dmhx" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/in/gabriel-dantas-3010a488?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://wa.me/5592984801522?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre..." aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
                 
@@ -249,20 +663,19 @@
                 <div class="footer-column reveal delay-4">
                     <h3>Contato</h3>
                     <ul class="footer-links">
-                        <li><i class="fas fa-map-marker-alt"></i>Rua Parque Minas Gerais, 42 - Iranduba, AM</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Rua Parque Minas Gerais, 42 - Iranduba, AM</li>
                         <li><i class="fas fa-phone"></i> (92) 98480-1522</li>
-                        <li><i class="fas fa-envelope"></i> glef@gestoes.com.br</li>
+                        <li><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d1b6bdb4b791b6b4a2a5beb4a2ffb2bebcffb3a3">[email&#160;protected]</a></li>
                         <li><i class="fas fa-clock"></i> Seg-Sex: 8h às 18h</li>
                     </ul>
                 </div>
             </div>
             
             <div class="copyright reveal delay-5">
-                <p>© 2026 Glef - Gestões Inteligente. Todos os direitos reservados. | CNPJ: 49.967.749/0001-00</p>
+                <p>© 2026 GLEF - Gestões Inteligentes. Todos os direitos reservados. | CNPJ: 49.967.749/0001-00</p>
             </div>
         </div>
     </footer>
-
     <script src="./js/script.js"></script>
 </body>
 </html>
