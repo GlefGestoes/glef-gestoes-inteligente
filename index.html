@@ -29,6 +29,7 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Menu</a></li>
                 <li><a href="#contabil">Contábil</a></li>
+                <li><a href="#ferramentas">Ferramentas</a></li>
                 <li><a href="#dev">Dev</a></li>
                 <li><a href="#dicas">Dicas</a></li>
             </ul>
@@ -506,6 +507,260 @@
             </div>
         </section>
 
+        <!-- ====================================================
+             SEÇÃO FERRAMENTAS — Gerador de Recibos + Planilha de Licitação
+             ==================================================== -->
+        <section id="ferramentas" class="section dark">
+            <div class="container">
+                <div class="section-title">
+                    <h2 class="reveal">Ferramentas Gratuitas</h2>
+                    <p class="reveal delay-1">Gere recibos com os descontos calculados e analise a margem de contratos e licitações, direto do navegador.</p>
+                </div>
+
+                <div class="fer-tabs-wrapper reveal delay-2">
+                    <div class="fer-tabs-header">
+                        <i class="fas fa-toolbox"></i>
+                        <span>Ferramentas do Dia a Dia</span>
+                    </div>
+                    <div class="fer-tabs" role="tablist">
+                        <button class="fer-tab active" role="tab" aria-selected="true" data-fer="recibo"><i class="fas fa-receipt"></i> Gerador de Recibos</button>
+                        <button class="fer-tab" role="tab" aria-selected="false" data-fer="licitacao"><i class="fas fa-file-contract"></i> Licitação e Markup</button>
+                    </div>
+                </div>
+
+                <!-- ============ FERRAMENTA 1: GERADOR DE RECIBOS ============ -->
+                <div class="fer-panel active" id="fer-tab-recibo">
+                    <div class="fer-card fer-screen-only">
+                        <div class="fer-head"><h2>Gerador de Recibos</h2><p>Pessoa Física e Pessoa Jurídica, com INSS, IR e retenções calculados</p></div>
+
+                        <div class="fer-block">
+                            <span class="fer-label">Tipo do prestador de serviço</span>
+                            <div class="fer-seg">
+                                <button type="button" class="fer-seg-btn active" id="fer-tipo-pf">Pessoa Física (PF)</button>
+                                <button type="button" class="fer-seg-btn" id="fer-tipo-pj">Pessoa Jurídica (PJ)</button>
+                            </div>
+                        </div>
+
+                        <div class="fer-row">
+                            <div class="fer-col fer-col-2">
+                                <label class="fer-label" for="fer-pgd-nome">Recebido de (pagador)</label>
+                                <input type="text" id="fer-pgd-nome" class="fer-input" placeholder="Nome do pagador ou razão social">
+                            </div>
+                            <div class="fer-col">
+                                <label class="fer-label" for="fer-pgd-doc">CPF / CNPJ do pagador</label>
+                                <div class="fer-mini-seg">
+                                    <button type="button" class="active" id="fer-pgd-cpf">CPF</button>
+                                    <button type="button" id="fer-pgd-cnpj">CNPJ</button>
+                                </div>
+                                <input type="text" id="fer-pgd-doc" class="fer-input" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="fer-row">
+                            <div class="fer-col fer-col-2">
+                                <label class="fer-label" for="fer-pst-nome">Nome do prestador</label>
+                                <input type="text" id="fer-pst-nome" class="fer-input" placeholder="Nome completo ou razão social">
+                            </div>
+                            <div class="fer-col">
+                                <label class="fer-label" for="fer-pst-doc">CPF / CNPJ do prestador</label>
+                                <div class="fer-mini-seg" id="fer-pst-doc-btns" style="display:none">
+                                    <button type="button" id="fer-pst-cpf">CPF</button>
+                                    <button type="button" class="active" id="fer-pst-cnpj">CNPJ</button>
+                                </div>
+                                <input type="text" id="fer-pst-doc" class="fer-input" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
+                            </div>
+                        </div>
+
+                        <div class="fer-row">
+                            <div class="fer-col">
+                                <label class="fer-label" for="fer-referente">Referente a</label>
+                                <textarea id="fer-referente" class="fer-input" rows="3" placeholder="Descreva o serviço prestado..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="fer-row">
+                            <div class="fer-col">
+                                <label class="fer-label" for="fer-valor">Valor (R$)</label>
+                                <input type="text" id="fer-valor" class="fer-input" placeholder="0,00" inputmode="numeric">
+                            </div>
+                            <div class="fer-col">
+                                <label class="fer-label" for="fer-data">Data de emissão</label>
+                                <input type="date" id="fer-data" class="fer-input">
+                            </div>
+                        </div>
+
+                        <div class="fer-block fer-tax-block">
+                            <h3 class="fer-block-title" id="fer-tax-title">Descontos e impostos (PF)</h3>
+
+                            <div id="fer-pf-box">
+                                <label class="fer-switch">
+                                    <input type="checkbox" id="fer-chk-pf">
+                                    <span class="fer-track"></span>
+                                    <span class="fer-switch-text">Calcular INSS e IR (tabelas 2026)</span>
+                                </label>
+                            </div>
+
+                            <div id="fer-pj-box" style="display:none">
+                                <label class="fer-switch">
+                                    <input type="checkbox" id="fer-chk-pj">
+                                    <span class="fer-track"></span>
+                                    <span class="fer-switch-text">Calcular impostos sobre o serviço</span>
+                                </label>
+
+                                <div id="fer-pj-panel" style="display:none">
+                                    <label class="fer-label" for="fer-regime" style="margin-top:16px">Regime tributário do prestador</label>
+                                    <select id="fer-regime" class="fer-input">
+                                        <option value="mei">MEI — Microempreendedor Individual</option>
+                                        <option value="simples">Simples Nacional</option>
+                                        <option value="geral">PJ em Geral (Lucro Presumido / Real)</option>
+                                    </select>
+                                    <div class="fer-info" id="fer-regime-info"></div>
+
+                                    <div id="fer-aliq-simples" style="display:none">
+                                        <div class="fer-aliq-grid">
+                                            <div><label class="fer-label" for="fer-a-iss-s">ISS (%)</label><input type="text" id="fer-a-iss-s" class="fer-input" value="5,00" inputmode="decimal"></div>
+                                        </div>
+                                        <p class="fer-note">Os demais tributos do Simples são recolhidos pelo prestador via DAS.</p>
+                                    </div>
+
+                                    <div id="fer-aliq-geral" style="display:none">
+                                        <div class="fer-aliq-grid">
+                                            <div><label class="fer-label" for="fer-a-iss">ISS (%)</label><input type="text" id="fer-a-iss" class="fer-input" value="5,00" inputmode="decimal"></div>
+                                            <div><label class="fer-label" for="fer-a-irpj">IRPJ (%)</label><input type="text" id="fer-a-irpj" class="fer-input" value="1,50" inputmode="decimal"></div>
+                                            <div><label class="fer-label" for="fer-a-csll">CSLL (%)</label><input type="text" id="fer-a-csll" class="fer-input" value="1,00" inputmode="decimal"></div>
+                                            <div><label class="fer-label" for="fer-a-pis">PIS (%)</label><input type="text" id="fer-a-pis" class="fer-input" value="0,65" inputmode="decimal"></div>
+                                            <div><label class="fer-label" for="fer-a-cofins">COFINS (%)</label><input type="text" id="fer-a-cofins" class="fer-input" value="3,00" inputmode="decimal"></div>
+                                            <div><label class="fer-label" for="fer-a-cbs">CBS (%)</label><input type="text" id="fer-a-cbs" class="fer-input" value="0,09" inputmode="decimal"></div>
+                                            <div><label class="fer-label" for="fer-a-ibs">IBS (%)</label><input type="text" id="fer-a-ibs" class="fer-input" value="0,01" inputmode="decimal"></div>
+                                        </div>
+                                        <p class="fer-note">Alíquotas padrão já preenchidas. Edite se o seu caso for diferente.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="fer-summary" id="fer-summary">
+                                <h4>Resumo dos descontos</h4>
+                                <div id="fer-summary-lines"></div>
+                            </div>
+                        </div>
+
+                        <div class="fer-actions">
+                            <button type="button" class="fer-btn fer-btn-main" id="fer-gerar"><i class="fas fa-file-invoice"></i> Gerar recibo</button>
+                            <button type="button" class="fer-btn fer-btn-sub" id="fer-limpar">Limpar</button>
+                        </div>
+                    </div>
+
+                    <div id="fer-recibo-out" style="display:none">
+                        <div class="fer-preview-bar fer-screen-only">
+                            <span><i class="fas fa-check-circle"></i> Recibo gerado em duas vias</span>
+                            <button type="button" class="fer-btn fer-btn-pink" id="fer-imprimir-recibo"><i class="fas fa-print"></i> Imprimir / Salvar PDF</button>
+                        </div>
+                        <div class="fer-receipt-wrapper">
+                            <div class="fer-receipt" id="fer-recibo-1"></div>
+                            <hr class="fer-receipt-divider">
+                            <div class="fer-receipt" id="fer-recibo-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ FERRAMENTA 2: LICITAÇÃO / MARKUP ============ -->
+                <div class="fer-panel" id="fer-tab-licitacao">
+                    <div class="fer-card" id="fer-lic-container">
+                        <div class="fer-head"><h2>Planilha de Custos, Markup e Resultado</h2><p>Simule a margem de um contrato ou licitação a partir dos percentuais de cada custo</p></div>
+
+                        <div class="fer-lic">
+                            <div class="fer-lic-row fer-lic-header"><div>Descrição</div><div>%</div><div>Valor (R$)</div></div>
+
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc"><strong>1 · Valor do contrato / licitação</strong></div>
+                                <div class="fer-lic-pct">100%</div>
+                                <div><input class="fer-input" id="lic-valor" placeholder="R$ 500.000,00" inputmode="numeric" aria-label="Valor do contrato"></div>
+                            </div>
+
+                            <div class="fer-lic-section">2 · Custos diretos</div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">2.1 Materiais e insumos</div>
+                                <div><input class="fer-input" id="lic-p21" placeholder="25%" inputmode="numeric" aria-label="2.1 Materiais e insumos (%)"></div>
+                                <div><input class="fer-input" id="lic-v21" readonly tabindex="-1" aria-label="2.1 Materiais e insumos (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">2.2 Mão de obra</div>
+                                <div><input class="fer-input" id="lic-p22" placeholder="20%" inputmode="numeric" aria-label="2.2 Mão de obra (%)"></div>
+                                <div><input class="fer-input" id="lic-v22" readonly tabindex="-1" aria-label="2.2 Mão de obra (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">2.3 Equipamentos e mobilização</div>
+                                <div><input class="fer-input" id="lic-p23" placeholder="8%" inputmode="numeric" aria-label="2.3 Equipamentos e mobilização (%)"></div>
+                                <div><input class="fer-input" id="lic-v23" readonly tabindex="-1" aria-label="2.3 Equipamentos e mobilização (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row fer-lic-sub">
+                                <div class="fer-lic-desc">Subtotal custos diretos</div>
+                                <div><input class="fer-input" id="lic-p2t" readonly tabindex="-1" aria-label="Subtotal custos diretos (%)"></div>
+                                <div><input class="fer-input" id="lic-v2t" readonly tabindex="-1" aria-label="Subtotal custos diretos (R$)"></div>
+                            </div>
+                            <div class="fer-lic-section">3 · Despesas indiretas e administrativas</div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">3.1 Administração central</div>
+                                <div><input class="fer-input" id="lic-p31" placeholder="6%" inputmode="numeric" aria-label="3.1 Administração central (%)"></div>
+                                <div><input class="fer-input" id="lic-v31" readonly tabindex="-1" aria-label="3.1 Administração central (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">3.2 Despesas operacionais</div>
+                                <div><input class="fer-input" id="lic-p32" placeholder="3%" inputmode="numeric" aria-label="3.2 Despesas operacionais (%)"></div>
+                                <div><input class="fer-input" id="lic-v32" readonly tabindex="-1" aria-label="3.2 Despesas operacionais (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">3.3 Despesas de licitação</div>
+                                <div><input class="fer-input" id="lic-p33" placeholder="4%" inputmode="numeric" aria-label="3.3 Despesas de licitação (%)"></div>
+                                <div><input class="fer-input" id="lic-v33" readonly tabindex="-1" aria-label="3.3 Despesas de licitação (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">3.4 Reserva para contingências e riscos</div>
+                                <div><input class="fer-input" id="lic-p34" placeholder="2%" inputmode="numeric" aria-label="3.4 Reserva para contingências e riscos (%)"></div>
+                                <div><input class="fer-input" id="lic-v34" readonly tabindex="-1" aria-label="3.4 Reserva para contingências e riscos (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row fer-lic-sub">
+                                <div class="fer-lic-desc">Subtotal despesas indiretas</div>
+                                <div><input class="fer-input" id="lic-p3t" readonly tabindex="-1" aria-label="Subtotal despesas indiretas (%)"></div>
+                                <div><input class="fer-input" id="lic-v3t" readonly tabindex="-1" aria-label="Subtotal despesas indiretas (R$)"></div>
+                            </div>
+                            <div class="fer-lic-section">4 · Lucro e impostos</div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">4 · Lucro e margem de segurança</div>
+                                <div><input class="fer-input" id="lic-p4" placeholder="12%" inputmode="numeric" aria-label="4 · Lucro e margem de segurança (%)"></div>
+                                <div><input class="fer-input" id="lic-v4" readonly tabindex="-1" aria-label="4 · Lucro e margem de segurança (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row">
+                                <div class="fer-lic-desc">5 · Impostos e encargos</div>
+                                <div><input class="fer-input" id="lic-p5" placeholder="20%" inputmode="numeric" aria-label="5 · Impostos e encargos (%)"></div>
+                                <div><input class="fer-input" id="lic-v5" readonly tabindex="-1" aria-label="5 · Impostos e encargos (R$)"></div>
+                            </div>
+                            <div class="fer-lic-row fer-lic-total">
+                                <div class="fer-lic-desc">6 · Resultado líquido estimado</div>
+                                <div class="fer-lic-pct">—</div>
+                                <div><input class="fer-input" id="lic-v6" readonly tabindex="-1" aria-label="Resultado líquido"></div>
+                            </div>
+                        </div>
+
+                        <div class="fer-kpis">
+                            <div class="fer-kpi"><span class="fer-kpi-label">Markup</span><strong id="lic-k-markup">—</strong><small id="lic-k-markup-sub">Contrato ÷ custos diretos</small></div>
+                            <div class="fer-kpi"><span class="fer-kpi-label">Margem de lucro bruta</span><strong id="lic-k-bruta">—</strong><small id="lic-k-bruta-sub">Contrato − custos diretos</small></div>
+                            <div class="fer-kpi"><span class="fer-kpi-label">Margem de lucro líquida</span><strong id="lic-k-liquida">—</strong><small id="lic-k-liquida-sub">Após despesas e impostos</small></div>
+                        </div>
+                        <p class="fer-alert" id="lic-alert" style="display:none"></p>
+
+                        <div class="fer-actions fer-screen-only">
+                            <button type="button" class="fer-btn fer-btn-pink" id="lic-imprimir"><i class="fas fa-print"></i> Imprimir / Salvar PDF</button>
+                            <button type="button" class="fer-btn fer-btn-sub" id="lic-limpar">Limpar</button>
+                        </div>
+
+                        <p class="fer-footer-msg">Para cálculos específicos de <strong>MEI, Simples Nacional, Lucro Presumido ou Lucro Real</strong>, entre em contato conosco.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <section id="dev" class="section dark">
             <div class="container">
                 <div class="section-title">
@@ -644,6 +899,7 @@
                     <ul class="footer-links">
                         <li><a href="#home">Menu</a></li>
                         <li><a href="#contabil">Contábil</a></li>
+                        <li><a href="#ferramentas">Ferramentas</a></li>
                         <li><a href="#dev">Dev</a></li>
                         <li><a href="#dicas">Dicas</a></li>
                     </ul>
