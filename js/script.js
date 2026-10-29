@@ -796,3 +796,379 @@ function amzLimpar() {
     });
     document.getElementById('amz-resultado').style.display = 'none';
 }
+
+// =========================================
+// FERRAMENTAS — GERADOR DE RECIBOS + LICITAÇÃO/MARKUP
+// (escopo isolado: não interfere nas calculadoras acima)
+// =========================================
+(function () {
+    'use strict';
+
+    const $ = (id) => document.getElementById(id);
+    const brl = (v) => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const num2 = (v) => Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const parseMoney = (s) => parseFloat(String(s || '').replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+
+    // ---------- Abas ----------
+    document.querySelectorAll('.fer-tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.fer-tab').forEach((t) => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+            document.querySelectorAll('.fer-panel').forEach((p) => p.classList.remove('active'));
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+            const panel = $('fer-tab-' + tab.dataset.fer);
+            if (panel) panel.classList.add('active');
+        });
+    });
+
+    // ---------- Impressão (isola a ferramenta ativa) ----------
+    function ferPrint(kind) {
+        const cls = 'fer-print-' + kind;
+        const done = () => { document.body.classList.remove(cls); window.removeEventListener('afterprint', done); };
+        document.body.classList.add(cls);
+        window.addEventListener('afterprint', done);
+        window.print();
+    }
+
+    // =====================================================
+    // RECIBO
+    // =====================================================
+    let tipo = 'PF';
+    let pgdDoc = 'CPF';
+    let pstDoc = 'CPF';
+
+    const fmtCPF = (v) => v.replace(/\D/g, '').substring(0, 11)
+        .replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    const fmtCNPJ = (v) => v.replace(/\D/g, '').substring(0, 14)
+        .replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+
+    function applyDoc(id, tp) {
+        const el = $(id);
+        el.value = '';
+        el.placeholder = tp === 'CNPJ' ? '00.000.000/0000-00' : '000.000.000-00';
+        el.maxLength = tp === 'CNPJ' ? 18 : 14;
+    }
+    function setActive(a, b, first) { $(a).classList.toggle('active', first); $(b).classList.toggle('active', !first); }
+
+    function setPgdDoc(tp) { pgdDoc = tp; setActive('fer-pgd-cpf', 'fer-pgd-cnpj', tp === 'CPF'); applyDoc('fer-pgd-doc', tp); }
+    function setPstDoc(tp) { pstDoc = tp; setActive('fer-pst-cpf', 'fer-pst-cnpj', tp === 'CPF'); applyDoc('fer-pst-doc', tp); }
+
+    function setTipo(t) {
+        tipo = t;
+        $('fer-tipo-pf').classList.toggle('active', t === 'PF');
+        $('fer-tipo-pj').classList.toggle('active', t === 'PJ');
+        $('fer-pf-box').style.display = t === 'PF' ? '' : 'none';
+        $('fer-pj-box').style.display = t === 'PJ' ? '' : 'none';
+        $('fer-tax-title').textContent = t === 'PF' ? 'Descontos e impostos (PF)' : 'Impostos sobre o serviço (PJ)';
+        if (t === 'PJ') { $('fer-pst-doc-btns').style.display = 'flex'; setPstDoc('CNPJ'); }
+        else { $('fer-pst-doc-btns').style.display = 'none'; pstDoc = 'CPF'; applyDoc('fer-pst-doc', 'CPF'); }
+        $('fer-pgd-doc').value = '';
+        recalc();
+    }
+
+    // Tabelas INSS e IRRF 2026 — as mesmas da calculadora "Pessoa Física" acima
+    function calcINSS(b) {
+        const base = Math.min(b, 8475.55);
+        if (base <= 1621.00) return base * 0.075;
+        if (base <= 2902.84) return base * 0.09 - 24.32;
+        if (base <= 4354.27) return base * 0.12 - 111.40;
+        return base * 0.14 - 198.49;
+    }
+    function calcIR(baseIR, bruto) {
+        let ir;
+        if (baseIR <= 2428.80) ir = 0;
+        else if (baseIR <= 2826.65) ir = baseIR * 0.075 - 182.16;
+        else if (baseIR <= 3751.05) ir = baseIR * 0.15 - 394.16;
+        else if (baseIR <= 4664.68) ir = baseIR * 0.225 - 675.49;
+        else ir = baseIR * 0.275 - 908.73;
+        ir = Math.max(ir, 0);
+        let red = 0;
+        if (bruto <= 5000) red = 312.89;
+        else if (bruto <= 7350) red = 978.62 - 0.133145 * bruto;
+        red = Math.min(Math.max(red, 0), ir);
+        return { ir: ir - red, reducao: red };
+    }
+
+    const pct = (id) => (parseFloat(($(id).value || '0').replace(',', '.')) || 0) / 100;
+    const pctTxt = (id) => num2(pct(id) * 100);
+    const getValor = () => parseMoney($('fer-valor').value);
+
+    // Monta o modelo de descontos usado no resumo e no recibo
+    function taxModel(bruto) {
+        if (bruto <= 0) return null;
+
+        if (tipo === 'PF') {
+            if (!$('fer-chk-pf').checked) return null;
+            const inss = calcINSS(bruto);
+            const baseIR = bruto - inss;
+            const r = calcIR(baseIR, bruto);
+            const tot = inss + r.ir;
+            const rows = [
+                { l: 'INSS (progressivo 2026)', v: -inss },
+                { l: 'Base de cálculo do IR', v: baseIR, info: true },
+            ];
+            if (r.reducao > 0) rows.push({ l: 'Redução adicional 2026', v: r.reducao, info: true });
+            rows.push({ l: 'IR retido', v: -r.ir });
+            return { titulo: 'Descontos — tabelas 2026', rows, total: tot, liquido: bruto - tot, totalLabel: 'Total de descontos' };
+        }
+
+        if (!$('fer-chk-pj').checked) return null;
+        const reg = $('fer-regime').value;
+        if (reg === 'mei') {
+            return { titulo: 'Regime: MEI — sem retenções na fonte', rows: [], total: 0, liquido: bruto, nota: 'MEI é isento de retenções. Tributos recolhidos via DAS mensal fixo.', totalLabel: 'Retenções' };
+        }
+        if (reg === 'simples') {
+            const iss = bruto * pct('fer-a-iss-s');
+            return { titulo: 'Regime: Simples Nacional — retenção de ISS', rows: [{ l: `ISS (${pctTxt('fer-a-iss-s')}%)`, v: -iss }], total: iss, liquido: bruto - iss, nota: 'Demais tributos do Simples recolhidos via DAS pelo prestador.', totalLabel: 'Total de retenções' };
+        }
+        const lista = [['ISS', 'fer-a-iss'], ['IRPJ', 'fer-a-irpj'], ['CSLL', 'fer-a-csll'], ['PIS', 'fer-a-pis'], ['COFINS', 'fer-a-cofins'], ['CBS', 'fer-a-cbs'], ['IBS', 'fer-a-ibs']];
+        let tot = 0;
+        const rows = lista.map(([n, id]) => { const v = bruto * pct(id); tot += v; return { l: `${n} (${pctTxt(id)}%)`, v: -v }; });
+        return { titulo: 'Regime: PJ em geral — retenções na fonte', rows, total: tot, liquido: bruto - tot, totalLabel: 'Total de retenções' };
+    }
+
+    const money = (r) => (r.info ? brl(r.v) : '- ' + brl(Math.abs(r.v)));
+
+    function recalc() {
+        const bruto = getValor();
+        const box = $('fer-summary');
+        const m = taxModel(bruto);
+        if (!m) { box.classList.remove('show'); return; }
+        let html = `<div class="fer-line"><span>Valor bruto</span><span>${brl(bruto)}</span></div>`;
+        m.rows.forEach((r) => { html += `<div class="fer-line"><span>${esc(r.l)}</span><span>${money(r)}</span></div>`; });
+        if (m.nota) html += `<div class="fer-line"><span>${esc(m.nota)}</span><span></span></div>`;
+        html += `<div class="fer-line"><span>${esc(m.totalLabel)}</span><span>- ${brl(m.total)}</span></div>`;
+        html += `<div class="fer-line"><span>Valor líquido a receber</span><span>${brl(m.liquido)}</span></div>`;
+        $('fer-summary-lines').innerHTML = html;
+        box.classList.add('show');
+    }
+
+    function onRegime() {
+        const reg = $('fer-regime').value;
+        const info = $('fer-regime-info');
+        $('fer-aliq-simples').style.display = 'none';
+        $('fer-aliq-geral').style.display = 'none';
+        info.style.display = 'block';
+        if (reg === 'mei') {
+            info.innerHTML = '<strong>MEI:</strong> isento de IRPJ, PIS, COFINS e CSLL. Paga apenas o DAS mensal fixo e não sofre retenção na fonte sobre o recibo.';
+        } else if (reg === 'simples') {
+            info.innerHTML = '<strong>Simples Nacional:</strong> apenas o ISS pode ser retido na fonte pelo tomador. Os demais tributos vão no DAS.';
+            $('fer-aliq-simples').style.display = '';
+        } else {
+            info.innerHTML = '<strong>PJ em geral:</strong> sujeita a retenções de ISS, IRPJ, CSLL, PIS, COFINS, CBS e IBS. Ajuste as alíquotas se necessário.';
+            $('fer-aliq-geral').style.display = '';
+        }
+        recalc();
+    }
+
+    // Valor por extenso (até 999.999.999,99)
+    function extenso(v) {
+        const un = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
+        const dz = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];
+        const cn = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];
+        const grupo = (n) => {
+            if (n === 100) return 'cem';
+            const c = Math.floor(n / 100), r = n % 100, p = [];
+            if (c) p.push(cn[c]);
+            if (r) {
+                if (r < 20) p.push(un[r]);
+                else p.push(r % 10 ? dz[Math.floor(r / 10)] + ' e ' + un[r % 10] : dz[Math.floor(r / 10)]);
+            }
+            return p.join(' e ');
+        };
+        const cents = Math.round(v * 100);
+        const int = Math.floor(cents / 100), cts = cents % 100;
+        if (cents === 0) return 'Zero reais';
+
+        const mi = Math.floor(int / 1e6), mil = Math.floor((int % 1e6) / 1000), res = int % 1000;
+        const partes = [];
+        if (mi) partes.push(mi === 1 ? 'um milhão' : grupo(mi) + ' milhões');
+        if (mil) partes.push(mil === 1 ? 'mil' : grupo(mil) + ' mil');
+        if (res) partes.push(grupo(res));
+        let txt = '';
+        partes.forEach((p, i) => {
+            if (i === 0) { txt = p; return; }
+            const ultimo = i === partes.length - 1;
+            const val = res || mil;
+            txt += (ultimo && (val < 100 || val % 100 === 0) ? ' e ' : ', ') + p;
+        });
+        if (int > 0) txt += (int % 1e6 === 0 ? ' de reais' : int === 1 ? ' real' : ' reais');
+        if (cts) txt += (int > 0 ? ' e ' : '') + grupo(cts) + (cts === 1 ? ' centavo' : ' centavos');
+        return txt.charAt(0).toUpperCase() + txt.slice(1);
+    }
+
+    function gerarRecibo() {
+        const bruto = getValor();
+        if (bruto <= 0) { alert('Informe um valor válido para o recibo.'); $('fer-valor').focus(); return; }
+
+        const blank = '___________________________';
+        const recebido = esc($('fer-pgd-nome').value.trim() || blank);
+        const prestador = esc($('fer-pst-nome').value.trim() || blank);
+        const referente = esc($('fer-referente').value.trim() || blank);
+        const dPgd = esc($('fer-pgd-doc').value.trim());
+        const dPst = esc($('fer-pst-doc').value.trim());
+        const dv = $('fer-data').value;
+        const dfmt = (dv ? new Date(dv + 'T12:00:00') : new Date()).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        const pgdLbl = pgdDoc === 'CNPJ' ? 'CNPJ pagador' : 'CPF pagador';
+        const pstLbl = tipo === 'PJ' && pstDoc === 'CNPJ' ? 'CNPJ prestador' : 'CPF prestador';
+
+        const m = taxModel(bruto);
+        let taxHTML = '';
+        if (m) {
+            const grid = m.rows.length
+                ? `<div class="fer-rc-grid">${m.rows.map((r) => `<div><small>${esc(r.l)}</small><strong>${money(r)}</strong></div>`).join('')}<div><small>${esc(m.totalLabel)}</small><strong>- ${brl(m.total)}</strong></div></div>`
+                : '';
+            taxHTML = `<div class="fer-rc-tax">
+                <div class="fer-rc-tax-title">${esc(m.titulo)}</div>${grid}
+                <div class="fer-rc-liq"><span>Valor líquido a receber</span><span>${brl(m.liquido)}</span></div>
+                ${m.nota ? `<p>${esc(m.nota)}</p>` : ''}
+            </div>`;
+        }
+        const regNome = tipo === 'PJ' && $('fer-chk-pj').checked ? ' | ' + { mei: 'MEI', simples: 'Simples Nacional', geral: 'PJ em geral' }[$('fer-regime').value] : '';
+
+        const html = `
+            <div class="fer-rc-header">
+                <div><div class="fer-rc-title">RECIBO</div><div class="fer-rc-sub">Emitido em ${dfmt}${regNome}</div></div>
+                <div class="fer-rc-badge">${tipo === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}</div>
+            </div>
+            <div class="fer-rc-value"><small>Valor do recibo</small><strong>${brl(bruto)}</strong><em>${extenso(bruto)}</em></div>
+            <div class="fer-rc-fields">
+                <div class="fer-rc-field"><b>Recebido de</b><span>${recebido}</span></div>
+                ${dPgd ? `<div class="fer-rc-field"><b>${pgdLbl}</b><span>${dPgd}</span></div>` : ''}
+                <div class="fer-rc-field"><b>Prestador</b><span>${prestador}</span></div>
+                ${dPst ? `<div class="fer-rc-field"><b>${pstLbl}</b><span>${dPst}</span></div>` : ''}
+                <div class="fer-rc-field"><b>Referente a</b><span>${referente}</span></div>
+            </div>
+            ${taxHTML}
+            <div class="fer-rc-footer">
+                <div class="fer-rc-date">Data de emissão<strong>${dfmt}</strong></div>
+                <div class="fer-rc-sign"><i></i><b>${prestador}</b><small>Assinatura do prestador</small></div>
+            </div>
+            <div class="fer-rc-obs">Este recibo quita a obrigação descrita acima. Valor bruto: ${brl(bruto)}${m ? ' | Valor líquido: ' + brl(m.liquido) : ''}.</div>
+            <div class="fer-rc-credit">Gerado em Glef · Gestões Inteligentes</div>`;
+
+        $('fer-recibo-1').innerHTML = html;
+        $('fer-recibo-2').innerHTML = html;
+        $('fer-recibo-out').style.display = 'block';
+        $('fer-recibo-out').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function limparRecibo() {
+        ['fer-pgd-nome', 'fer-pgd-doc', 'fer-pst-nome', 'fer-pst-doc', 'fer-referente', 'fer-valor'].forEach((id) => { $(id).value = ''; });
+        $('fer-data').value = new Date().toISOString().split('T')[0];
+        $('fer-chk-pf').checked = false;
+        $('fer-chk-pj').checked = false;
+        $('fer-pj-panel').style.display = 'none';
+        $('fer-recibo-out').style.display = 'none';
+        recalc();
+    }
+
+    // Eventos do recibo
+    $('fer-tipo-pf').addEventListener('click', () => setTipo('PF'));
+    $('fer-tipo-pj').addEventListener('click', () => setTipo('PJ'));
+    $('fer-pgd-cpf').addEventListener('click', () => setPgdDoc('CPF'));
+    $('fer-pgd-cnpj').addEventListener('click', () => setPgdDoc('CNPJ'));
+    $('fer-pst-cpf').addEventListener('click', () => setPstDoc('CPF'));
+    $('fer-pst-cnpj').addEventListener('click', () => setPstDoc('CNPJ'));
+    $('fer-pgd-doc').addEventListener('input', (e) => { e.target.value = pgdDoc === 'CNPJ' ? fmtCNPJ(e.target.value) : fmtCPF(e.target.value); });
+    $('fer-pst-doc').addEventListener('input', (e) => { e.target.value = pstDoc === 'CNPJ' ? fmtCNPJ(e.target.value) : fmtCPF(e.target.value); });
+    $('fer-valor').addEventListener('input', (e) => {
+        const d = e.target.value.replace(/\D/g, '');
+        e.target.value = d ? num2(Number(d) / 100) : '';
+        recalc();
+    });
+    document.querySelectorAll('.fer-aliq-grid input').forEach((el) => {
+        el.addEventListener('input', () => { el.value = el.value.replace(/[^0-9,.]/g, ''); recalc(); });
+    });
+    $('fer-chk-pf').addEventListener('change', recalc);
+    $('fer-chk-pj').addEventListener('change', () => {
+        const on = $('fer-chk-pj').checked;
+        $('fer-pj-panel').style.display = on ? '' : 'none';
+        if (on) onRegime(); else recalc();
+    });
+    $('fer-regime').addEventListener('change', onRegime);
+    $('fer-gerar').addEventListener('click', gerarRecibo);
+    $('fer-limpar').addEventListener('click', limparRecibo);
+    $('fer-imprimir-recibo').addEventListener('click', () => ferPrint('recibo'));
+
+    $('fer-data').value = new Date().toISOString().split('T')[0];
+    applyDoc('fer-pgd-doc', 'CPF');
+    applyDoc('fer-pst-doc', 'CPF');
+
+    // =====================================================
+    // LICITAÇÃO / MARKUP
+    // =====================================================
+    const pctIds = ['21', '22', '23', '31', '32', '33', '34', '4', '5'];
+    const pctInputs = pctIds.map((i) => $('lic-p' + i));
+    const getP = (i) => (parseFloat($('lic-p' + i).value.replace('%', '').replace(/\./g, '').replace(',', '.')) || 0) / 100;
+    const pTxt = (v) => num2(v * 100) + '%';
+    const setKpi = (id, main, sub) => { $('lic-k-' + id).textContent = main; $('lic-k-' + id + '-sub').textContent = sub; };
+
+    function licCalcular() {
+        const contrato = parseMoney($('lic-valor').value);
+        const alerta = $('lic-alert');
+        alerta.style.display = 'none';
+
+        if (contrato <= 0) {
+            pctIds.forEach((i) => { $('lic-v' + i).value = ''; });
+            ['2t', '3t', '6'].forEach((i) => { $('lic-v' + i).value = ''; });
+            ['2t', '3t'].forEach((i) => { $('lic-p' + i).value = ''; });
+            setKpi('markup', '—', 'Contrato ÷ custos diretos');
+            setKpi('bruta', '—', 'Contrato − custos diretos');
+            setKpi('liquida', '—', 'Após despesas e impostos');
+            return;
+        }
+
+        const val = {};
+        pctIds.forEach((i) => { val[i] = contrato * getP(i); $('lic-v' + i).value = brl(val[i]); });
+
+        const cd = val['21'] + val['22'] + val['23'];
+        const di = val['31'] + val['32'] + val['33'] + val['34'];
+        $('lic-p2t').value = pTxt(cd / contrato);
+        $('lic-v2t').value = brl(cd);
+        $('lic-p3t').value = pTxt(di / contrato);
+        $('lic-v3t').value = brl(di);
+
+        const liquido = contrato - cd - di - val['5'];
+        $('lic-v6').value = brl(liquido);
+
+        // Markup = contrato ÷ custos diretos; percentual = (markup − 1) × 100
+        if (cd > 0) {
+            const mk = contrato / cd;
+            setKpi('markup', mk.toFixed(4).replace('.', ','), `Acréscimo de ${num2((mk - 1) * 100)}% sobre os custos diretos`);
+        } else {
+            setKpi('markup', '—', 'Informe os custos diretos');
+        }
+        const bruta = contrato - cd;
+        setKpi('bruta', pTxt(bruta / contrato), brl(bruta));
+        setKpi('liquida', pTxt(liquido / contrato), brl(liquido));
+
+        if (liquido < 0) {
+            alerta.textContent = 'Atenção: o resultado líquido estimado é negativo. Revise custos, despesas e impostos antes de enviar a proposta.';
+            alerta.style.display = 'block';
+        }
+    }
+
+    function licLimpar() {
+        $('lic-valor').value = '';
+        pctInputs.forEach((el) => { el.value = ''; });
+        licCalcular();
+    }
+
+    $('lic-valor').addEventListener('input', (e) => {
+        const d = e.target.value.replace(/\D/g, '');
+        e.target.value = d ? brl(Number(d) / 100) : '';
+        licCalcular();
+    });
+    pctInputs.forEach((el) => {
+        el.addEventListener('input', () => {
+            const d = el.value.replace(/\D/g, '');
+            el.value = d ? num2(Number(d) / 100) + '%' : '';
+            licCalcular();
+        });
+    });
+    $('lic-limpar').addEventListener('click', licLimpar);
+    $('lic-imprimir').addEventListener('click', () => ferPrint('licitacao'));
+})();
