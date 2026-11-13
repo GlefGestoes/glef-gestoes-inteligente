@@ -1172,3 +1172,126 @@ function amzLimpar() {
     $('lic-limpar').addEventListener('click', licLimpar);
     $('lic-imprimir').addEventListener('click', () => ferPrint('licitacao'));
 })();
+
+// =========================================
+// BANNERS DE PROPAGANDA + BOTÃO FLUTUANTE DE REDES SOCIAIS
+// =========================================
+
+// Para trocar a propaganda do espaço "promo-slot-1": edite os campos abaixo.
+// Para ocultar o banner (sem deixar espaço em branco): enabled: false.
+const GLEF_ADS = {
+    'promo-slot-1': {
+        enabled: true,
+        tag: 'Publicidade',
+        title: 'Anuncie sua marca aqui',
+        text: 'Espaço reservado para parceiros e campanhas da Glef.',
+        cta: 'Quero anunciar',
+        url: 'https://wa.me/5592984801522?text=Ol%C3%A1!%20Tenho%20interesse%20em%20anunciar%20no%20site%20da%20Glef.',
+        image: '' // opcional: './img/anuncio.jpg'
+    }
+};
+
+(function () {
+    document.querySelectorAll('.promo-slot').forEach((slot) => {
+        const ad = GLEF_ADS[slot.id];
+        const wrap = slot.closest('.promo-wrap');
+        if (!ad || !ad.enabled || !/^https?:\/\//i.test(ad.url || '')) { if (wrap) wrap.hidden = true; return; }
+
+        slot.href = ad.url;
+        slot.target = '_blank';
+        slot.rel = 'sponsored noopener noreferrer';
+        slot.setAttribute('aria-label', `${ad.tag}: ${ad.title}`);
+        slot.textContent = '';
+
+        if (ad.image) {
+            const img = document.createElement('img');
+            img.className = 'promo-slot-img';
+            img.src = ad.image;
+            img.alt = '';
+            img.loading = 'lazy';
+            slot.appendChild(img);
+        }
+        const body = document.createElement('div');
+        body.className = 'promo-slot-body';
+        const tag = document.createElement('span'); tag.className = 'promo-label'; tag.textContent = ad.tag;
+        const h = document.createElement('h4'); h.textContent = ad.title;
+        const p = document.createElement('p'); p.textContent = ad.text;
+        body.append(tag, h, p);
+        const cta = document.createElement('span'); cta.className = 'promo-btn'; cta.textContent = ad.cta;
+        slot.append(body, cta);
+    });
+
+    // Botão flutuante: abre/fecha, fecha ao clicar fora ou com Esc
+    const fab = document.getElementById('fabSocial');
+    const toggle = document.getElementById('fabToggle');
+    if (!fab || !toggle) return;
+    const setOpen = (open) => {
+        fab.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Fechar redes sociais' : 'Abrir redes sociais');
+    };
+    toggle.addEventListener('click', () => setOpen(!fab.classList.contains('open')));
+    document.addEventListener('click', (e) => { if (!fab.contains(e.target)) setOpen(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && fab.classList.contains('open')) { setOpen(false); toggle.focus(); } });
+})();
+
+// =========================================
+// LEMBRETE TEMPORÁRIO DO CERTIFICADO (aparece 1x por visita, some em N segundos)
+// =========================================
+const GLEF_TEASER = {
+    enabled: true,   // false = desativa o lembrete
+    seconds: 5,      // tempo na tela
+    scrollStart: 350 // aparece depois de rolar tantos pixels
+};
+
+(function () {
+    const box = document.getElementById('promoTeaser');
+    if (!box || !GLEF_TEASER.enabled) return;
+    const link = box.querySelector('.promo-teaser-link');
+    const close = box.querySelector('.promo-teaser-close');
+    const bar = box.querySelector('.promo-teaser-bar');
+    const target = document.getElementById((link.getAttribute('href') || '').slice(1));
+    if (!target) return;
+
+    const KEY = 'glefTeaserSeen';
+    try { if (sessionStorage.getItem(KEY)) return; } catch (e) { /* sem storage: segue */ }
+
+    let shown = false, done = false, targetVisible = false;
+
+    const hide = () => {
+        if (done) return;
+        done = true;
+        box.classList.remove('show');
+        try { sessionStorage.setItem(KEY, '1'); } catch (e) { /* ignora */ }
+        window.removeEventListener('scroll', onScroll);
+        io.disconnect();
+        setTimeout(() => { box.hidden = true; }, 400);
+    };
+
+    const show = () => {
+        if (shown || done || targetVisible) return;
+        shown = true;
+        box.style.setProperty('--teaser-time', GLEF_TEASER.seconds + 's');
+        box.hidden = false;
+        requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add('show')));
+    };
+
+    function onScroll() { if (window.scrollY > GLEF_TEASER.scrollStart) show(); }
+
+    // Se o usuário já está vendo o banner completo, o lembrete não faz sentido
+    const io = new IntersectionObserver((entries) => {
+        targetVisible = entries[0].isIntersecting;
+        if (targetVisible && shown) hide();
+    }, { threshold: 0.25 });
+    io.observe(target);
+
+    bar.addEventListener('animationend', hide);
+    close.addEventListener('click', hide);
+    link.addEventListener('click', () => {
+        target.classList.add('promo-flash');
+        setTimeout(() => target.classList.remove('promo-flash'), 1700);
+        hide();
+    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
