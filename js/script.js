@@ -1236,11 +1236,11 @@ const GLEF_ADS = {
 })();
 
 // =========================================
-// LEMBRETE TEMPORÁRIO DO CERTIFICADO (aparece 1x por visita, some em N segundos)
+// LEMBRETE TEMPORÁRIO DO CERTIFICADO (aparece 1x por visita, some em N segundos (topo da tela))
 // =========================================
 const GLEF_TEASER = {
     enabled: true,   // false = desativa o lembrete
-    seconds: 5,      // tempo na tela
+    seconds: 10,     // tempo na tela
     scrollStart: 350 // aparece depois de rolar tantos pixels
 };
 
@@ -1272,6 +1272,8 @@ const GLEF_TEASER = {
         if (shown || done || targetVisible) return;
         shown = true;
         box.style.setProperty('--teaser-time', GLEF_TEASER.seconds + 's');
+        const nav = document.querySelector('.navbar');
+        if (nav) box.style.setProperty('--nav-h', nav.offsetHeight + 'px');
         box.hidden = false;
         requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add('show')));
     };
