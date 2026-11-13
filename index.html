@@ -78,7 +78,10 @@
                     </div>
                     
                     <div class="card stagger-card reveal-center delay-1">
-                        <img src="./img/rh.png" alt="Gestão de RH" class="card-img">
+                        <a class="card-media" href="https://ispirarhconsultoria.com" target="_blank" rel="noopener noreferrer" aria-label="Acessar o site de RH (abre em nova aba)">
+                            <img src="./img/rh.png" alt="Gestão de RH" class="card-img">
+                            <span class="card-media-chip">Acessar site de RH <i class="fas fa-arrow-up-right-from-square"></i></span>
+                        </a>
                         <div class="card-content">
                             <h3>Recursos Humanos</h3>
                             <p>Folha de pagamento, admissões, rescisões, compliance trabalhista e gestão de benefícios para sua equipe.</p>
@@ -507,6 +510,23 @@
             </div>
         </section>
 
+        <!-- ============ BANNER: CERTIFICADO DIGITAL ============ -->
+        <aside class="promo-wrap" id="promo-cert" aria-label="Publicidade: certificado digital">
+            <div class="container">
+                <span class="promo-label">Publicidade</span>
+                <div class="promo-cert reveal">
+                    <div class="promo-cert-icon" aria-hidden="true"><i class="fas fa-file-signature"></i></div>
+                    <div>
+                        <span class="promo-tag">Revenda de Certificado Digital</span>
+                        <h3>Emita ou renove seu e-CPF e e-CNPJ com a Glef</h3>
+                        <p>Assine documentos, emita notas fiscais e acesse serviços da Receita e do governo com o atendimento de quem já cuida da sua contabilidade.</p>
+                        <div class="promo-chips"><span>e-CPF</span><span>e-CNPJ</span></div>
+                    </div>
+                    <a class="promo-btn" href="https://wa.me/5592984801522?text=Ol%C3%A1!%20Gostaria%20de%20emitir%20ou%20renovar%20meu%20certificado%20digital." target="_blank" rel="noopener noreferrer">Solicitar certificado <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </aside>
+
         <!-- ====================================================
              SEÇÃO FERRAMENTAS — Gerador de Recibos + Planilha de Licitação
              ==================================================== -->
@@ -838,6 +858,13 @@
             </div>
         </section>
 
+        <!-- ============ BANNER: ESPAÇO PARA FUTURAS PROPAGANDAS (edite GLEF_ADS no script.js) ============ -->
+        <aside class="promo-wrap" aria-label="Publicidade">
+            <div class="container">
+                <a class="promo-slot" id="promo-slot-1"></a>
+            </div>
+        </aside>
+
         <section id="dicas" class="section">
             <div class="container">
                 <div class="section-title">
@@ -932,6 +959,28 @@
             </div>
         </div>
     </footer>
+    <!-- Lembrete temporário do certificado digital (aparece 1x, some em 5s) -->
+    <div class="promo-teaser" id="promoTeaser" role="region" aria-label="Destaque: certificado digital" hidden>
+        <a class="promo-teaser-link" href="#promo-cert">
+            <span class="promo-teaser-ico" aria-hidden="true"><i class="fas fa-file-signature"></i></span>
+            <span class="promo-teaser-txt"><strong>Certificado Digital</strong><small>e-CPF e e-CNPJ · toque para ver</small></span>
+        </a>
+        <button type="button" class="promo-teaser-close" aria-label="Fechar destaque"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+        <span class="promo-teaser-bar" aria-hidden="true"></span>
+    </div>
+
+    <!-- Botão flutuante de redes sociais -->
+    <div class="fab-social" id="fabSocial">
+        <ul class="fab-list" id="fabList">
+            <li><a class="wa" href="https://wa.me/5592984801522?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre..." target="_blank" rel="noopener noreferrer"><span class="fab-name">WhatsApp</span><span class="fab-ico"><i class="fab fa-whatsapp"></i></span></a></li>
+            <li><a class="ig" href="https://www.instagram.com/sro_gabriel_dantas?igsh=eWwyMW85c255dmhx" target="_blank" rel="noopener noreferrer"><span class="fab-name">Instagram</span><span class="fab-ico"><i class="fab fa-instagram"></i></span></a></li>
+            <li><a class="li" href="https://www.linkedin.com/in/gabriel-dantas-3010a488" target="_blank" rel="noopener noreferrer"><span class="fab-name">LinkedIn</span><span class="fab-ico"><i class="fab fa-linkedin-in"></i></span></a></li>
+        </ul>
+        <button type="button" class="fab-main" id="fabToggle" aria-expanded="false" aria-controls="fabList" aria-label="Abrir redes sociais">
+            <i class="fas fa-comments" aria-hidden="true"></i><i class="fas fa-xmark" aria-hidden="true"></i>
+        </button>
+    </div>
+
     <script src="./js/script.js"></script>
 </body>
 </html>
